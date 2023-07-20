@@ -111,25 +111,3 @@ class _CheckOutOptionState extends State<CheckOutOption> {
   }
 }
 
-/*class CustomRadio extends StatefulWidget {
-  final int value;
-  final int groupValue;
-  final void Function(int)? onChanged;
-  const CustomRadio({Key? key, required this.value, required this.groupValue, required this.onChanged })
-  : super(key: key);
-
-  @override
-  State<CustomRadio> createState() => _CustomRadioState();
-}
-
-class _CustomRadioState extends State<CustomRadio> {
-  @override
-  Widget build(BuildContext context) {
-    //bool selected = (widget.value == widget.groupValue);
-
-    return Radio(
-      value: widget.value, 
-      groupValue: widget.groupValue, 
-      onChanged: widget.onChanged);
-  }
-}*/

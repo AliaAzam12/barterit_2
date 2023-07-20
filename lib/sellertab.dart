@@ -162,7 +162,7 @@ class _SellerTabState extends State<SellerTab> {
                       
                       color = Colors.red;
                     } else {
-                      color = Colors.black;
+                      color = Colors.white;
                     }
                     return TextButton(
                         onPressed: () {
