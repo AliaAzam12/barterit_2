@@ -7,14 +7,16 @@ if (!isset($_POST)) {
 
 include_once("dbconnect.php");
 
-
+$userid = $_POST['userid'];
+$name = $_POST['name'];
 $email = $_POST['email'];
-$phone = $_POST['phone'];
 $password = $_POST['password'];
+$phone = $_POST['phone'];
 
-$sqlinsert = "INSERT INTO `tbl_user`(`user_email`, `user_name`, `user_phone`, `user_pass`) VALUES ('$email','$name','$phone','$password')";
 
-if ($conn->query($sqlinsert) === TRUE) {
+$sqlupdate = "UPDATE `tbl_user` SET `userid`='$userid',`user_name`='$name',`user_email`='$email',`user_phone`='$phone',`user_pass`='$password' WHERE `userid` = '$userid'";
+
+if ($conn->query($sqlupdate) === TRUE) {
 	$response = array('status' => 'success', 'data' => null);
     sendJsonResponse($response);
 }else{
@@ -29,3 +31,4 @@ function sendJsonResponse($sentArray)
 }
 
 ?>
+

@@ -6,15 +6,17 @@ if (!isset($_POST)) {
 }
 
 include_once("dbconnect.php");
+//SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate FROM Orders INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
 
-if (isset($_POST['pridowner'])){
-	$pridowner = $_POST['pridowner'];	
-	$sqlcart = "SELECT * FROM `tbl_cart` INNER JOIN `tbl_product` ON tbl_cart.prid = tbl_product.prid WHERE tbl_cart.pridowner = '$pridowner'";
+
+if (isset($_POST['userid'])){
+	$userid = $_POST['pridowner'];	
+	$sqlcart = "SELECT * FROM `tbl_cart` INNER JOIN `tbl_product` ON tbl_cart.prid = tbl_product.prid WHERE tbl_cart.pridowner = '$userid'";
 }
 
 $result = $conn->query($sqlcart);
 if ($result->num_rows > 0) {
-    $cartitems["carts"] = array();
+    $carts["carts"] = array();
 	while ($row = $result->fetch_assoc()) {
         $cartlist = array();
         $cartlist['cartid'] = $row['cartid'];
@@ -28,9 +30,9 @@ if ($result->num_rows > 0) {
         $cartlist['pridowner'] = $row['pridowner'];
         $cartlist['sellerid'] = $row['sellerid'];
         $cartlist['cartdate'] = $row['cartdate'];
-        array_push($cartitems["carts"] ,$cartlist);
+        array_push($carts["carts"] ,$cartlist);
     }
-    $response = array('status' => 'success', 'data' => $cartitems);
+    $response = array('status' => 'success', 'data' => $carts);
     sendJsonResponse($response);
 }else{
      $response = array('status' => 'failed', 'data' => null);
@@ -41,4 +43,3 @@ function sendJsonResponse($sentArray)
     header('Content-Type: application/json');
     echo json_encode($sentArray);
 }
-?>

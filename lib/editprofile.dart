@@ -195,7 +195,7 @@ final TextEditingController _pass2EditingController = TextEditingController();
        "name": name, 
           "email": email, 
           "phone": phone, 
-          "password": pass1
+          "password": pass1,
     }).then((response){
       print(response.body);
       if (response.statusCode == 200){

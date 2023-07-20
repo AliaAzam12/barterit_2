@@ -11,7 +11,7 @@ $cartid = $_POST['cartid'];
 $newqty = $_POST['newqty'];
 $newprice = $_POST['newprice'];
 
-$sql = "UPDATE `tbl_cart` SET `cartqty`= $newqty ,`cartprice`= $newprice WHERE  `cartid` = '$cartid'";
+$sql = "UPDATE `tbl_cart` SET `cartqty`= '$newqty' ,`cartprice`= '$newprice' WHERE `cartid` = '$cartid'";
 
 if ($conn->query($sql) === TRUE) {
 		$response = array('status' => 'success', 'data' => $sql);

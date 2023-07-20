@@ -17,7 +17,7 @@ $checkcatchid = "SELECT * FROM `tbl_cart` WHERE `pridowner` = '$pridowner' AND  
 $resultqty = $conn->query($checkcatchid);
 $numresult = $resultqty->num_rows;
 if ($numresult > 0) {
-	$sql = "UPDATE `tbl_cart` SET `cartqty`= (cartqty + $cartqty),`cartprice`= (cartprice + $cartprice) WHERE `pridowner` = '$pridowner' AND  `prid` = '$prid'";
+	$sql = "UPDATE `tbl_cart` SET `cartqty`= (cartqty + '$cartqty'),`cartprice`= (cartprice + '$cartprice') WHERE `pridowner` = '$pridowner' AND  `prid` = '$prid'";
 }else{
 	$sql = "INSERT INTO `tbl_cart`(`prid`, `cartqty`, `cartprice`, `pridowner`, `sellerid`) VALUES ('$prid','$cartqty','$cartprice','$pridowner','$sellerid')";
 }
