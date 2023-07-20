@@ -102,7 +102,7 @@ void initState(){
                       color: Colors.white
              )),),
             MaterialButton(
-              color: Colors.blue,
+              color: Colors.indigo,
              shape: RoundedRectangleBorder(
              borderRadius: BorderRadius.circular(5.0)),
              minWidth: 100,
@@ -149,7 +149,7 @@ void initState(){
   }
 
   void _login() {
-     FocusScope.of(context as BuildContext).requestFocus(FocusNode());
+     //FocusScope.of(context as BuildContext).requestFocus(FocusNode());
    if (!_formKey.currentState!.validate()) {
         Fluttertoast.showToast(
             msg: "Please fill in the login credentials",

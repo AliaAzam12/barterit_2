@@ -45,6 +45,10 @@ dependencies:
   geolocator: ^9.0.2
   geocoding: ^2.1.0
   cached_network_image: ^3.2.3
+  stripe_checkout: ^1.0.2
+  http: ^0.13.6
+  flutter_awesome_buttons: ^1.1.0
+  flutter_stripe: ^9.2.2
 
 dev_dependencies:
   flutter_test:

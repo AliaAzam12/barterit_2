@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:convert';
+import 'package:barterit_2/checkoutoption.dart';
 import 'package:barterit_2/deleteproduct.dart';
 import 'package:barterit_2/editproduct.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'config.dart';
 import 'model/product.dart';
 import 'model/user.dart';
+import 'package:http/http.dart' as http;
 
 class SellerDetailScreen extends StatefulWidget {
   final Product product;
@@ -19,7 +21,7 @@ class SellerDetailScreen extends StatefulWidget {
 class _SellerDetailScreenState extends State<SellerDetailScreen> {
   late double screenHeight, screenWidth, cardWidth;
   int qty = 0;
-  int userqty = 0;
+  int userqty = 1;
   double totalprice = 0.0;
   double price = 0.0;
 
@@ -113,6 +115,20 @@ class _SellerDetailScreenState extends State<SellerDetailScreen> {
                               style: const TextStyle(color: Colors.white, fontSize: 18),)),
                         ]
                       ),
+                      TableRow(children: [
+                  const TableCell(
+                    child: Text(
+                      "Price :",
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                  TableCell(
+                    child: Text(
+                      "RM ${double.parse(widget.product.prprice.toString()).toStringAsFixed(2)}",
+                      style: const TextStyle(color: Colors.white, fontSize: 18)
+                    ),
+                  )
+                ]),
                       TableRow(
                         children: [
                           const TableCell(
@@ -123,15 +139,6 @@ class _SellerDetailScreenState extends State<SellerDetailScreen> {
                               style: const TextStyle(color: Colors.white, fontSize: 18),)),
                         ]
                       ),
-                      /*TableRow(
-                        children: [
-                          const TableCell(
-                            child: Text("Date", style: TextStyle(fontWeight: FontWeight.bold),
-                          )),
-                          TableCell(
-                              child: Text(df.format(DateTime.parse(widget.product.prdate.toString()))),
-                      )]
-                      ),*/
                     ],
                   ),
                 )),
@@ -159,11 +166,11 @@ class _SellerDetailScreenState extends State<SellerDetailScreen> {
                         ),
                         IconButton(
                           onPressed: (){
-                            if(userqty <= 1){
-                            userqty = 1;
+                            if(userqty >= qty){
+                            userqty = qty;
                             totalprice = price * userqty;
                           } else{
-                            userqty = userqty - 1;
+                            userqty = userqty + 1;
                             totalprice = price * userqty;
                           }
                           setState(() {});
@@ -175,16 +182,101 @@ class _SellerDetailScreenState extends State<SellerDetailScreen> {
 
                 Text("RM ${totalprice.toStringAsFixed(2)}",
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),),
-                /*ElevatedButton(
+                
+                ElevatedButton(
                   onPressed: (){
-                    addtocart();
+                    addtocartdialog();
                   }, 
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
                   child: const Text("Add to Cart", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
-      )*/
+      ),
+      ElevatedButton(
+        onPressed: ()async{
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (content)=> CheckOutOption(
+                          user: widget.user,
+                         product: widget.product,
+                         )
+                         )
+                    );
+                  }, 
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+                  child: const Text("Check Out", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      ),
       ],
       ),
     );
   }
   
-  void addtocart() {}
+  void addtocartdialog() {
+    if (widget.user.id.toString() == "na") {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please register to add item to cart")));
+      return;
+    }
+    if (widget.user.id.toString() == widget.product.pridowner.toString()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User cannot add own item")));
+      return;
+    }
+    showDialog(
+      context: context, 
+      builder: (BuildContext context){
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))
+          ),
+          title: const Text("Add to cart?", style: TextStyle(color: Colors.white),),
+          content: const Text("Are you sure?", style: TextStyle(color: Colors.white)),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Yes", style: TextStyle(),
+              ),
+              onPressed: (){
+                Navigator.of(context).pop();
+                addtocart();
+              }),
+              TextButton(
+                child: const Text("No", style: TextStyle(),
+              ),
+                onPressed: (){
+                  Navigator.of(context).pop();
+                })
+          ],
+        );
+      });
+  }
+  
+  void addtocart() {
+     http.post(Uri.parse("${MyConfig().SERVER}/barter_it/php/addtocart.php"),
+     body:{
+          "prid": widget.product.prid.toString(),
+          "cartqty": userqty.toString(),
+          "cartprice": totalprice.toString(),
+          "pridowner": widget.user.id.toString(),
+          "sellerid": widget.product.pridowner.toString(),
+     }).then((response){
+      print(response.body);
+      if(response.statusCode == 200){
+         var jsondata = jsonDecode(response.body);
+         if(jsondata['status'] == 'success'){
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Success")));
+         }else{
+           ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Failed")));
+         }
+         Navigator.pop(context);   
+      }else{
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Failed")));
+        Navigator.pop(context);
+      }
+     });
+
+  }
+  
+  void checkoutdialog() {}
 }

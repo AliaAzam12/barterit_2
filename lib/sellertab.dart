@@ -36,7 +36,7 @@ class _SellerTabState extends State<SellerTab> {
   @override
   void initState() {
     super.initState();
-    loadProduct(1);
+    loadProduct();
     print("Seller");
   }
 
@@ -66,7 +66,7 @@ class _SellerTabState extends State<SellerTab> {
               icon: const Icon(Icons.search)),
           TextButton.icon(
             icon: const Icon(
-              Icons.shopping_cart,
+              Icons.shopping_cart, color: Colors.white,
             ), // Your icon here
             label: Text(cartqty.toString()), // Your text here
             onPressed: () {
@@ -77,6 +77,7 @@ class _SellerTabState extends State<SellerTab> {
                         builder: (content) => CartScreen(
                               user: widget.user,
                             )));
+                            loadProduct();
               }else{
                  ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("No item in cart")));
@@ -92,7 +93,7 @@ class _SellerTabState extends State<SellerTab> {
             )
           : Column(children: [
               Container(
-                height: 24,
+                height: 20,
                 alignment: Alignment.center,
                 child: Text(
                   "$numberofresult Product Found",
@@ -118,11 +119,11 @@ class _SellerTabState extends State<SellerTab> {
                                               user: widget.user,
                                               product: product,
                                             )));
-                                loadProduct(1);
+                                loadProduct();
                               },
                               child: Column(children: [
                                 CachedNetworkImage(
-                                  height: 120,
+                                  height: 100,
                                   width: screenWidth,
                                   fit: BoxFit.cover,
                                   imageUrl:
@@ -150,7 +151,7 @@ class _SellerTabState extends State<SellerTab> {
                         },
                       ))),
               SizedBox(
-                height: 30,
+                height: 40,
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: noPage,
@@ -166,7 +167,7 @@ class _SellerTabState extends State<SellerTab> {
                     return TextButton(
                         onPressed: () {
                           currPage = index + 1;
-                          loadProduct(index + 1);
+                          loadProduct();
                         },
                         child: Text(
                           (index + 1).toString(),
@@ -190,11 +191,11 @@ class _SellerTabState extends State<SellerTab> {
     );
   }
 
-   Future <void> loadProduct(int pg) async {
+   Future <void> loadProduct() async {
     http.post(Uri.parse("${MyConfig().SERVER}/barter_it/php/loadproduct.php"),
         body: {
           "userid": widget.user.id,
-          "pageno": pg.toString()
+          "pageno": currPage.toString()
         }).then((response) {
       //print(response.body);
       log(response.body);
@@ -210,8 +211,8 @@ class _SellerTabState extends State<SellerTab> {
               noPage = int.parse(jsondata['noPage']); //get number of pages
               numberofresult = int.parse(jsondata['noResult']);
               print(numberofresult);
-              //cartqty = int.parse(jsondata['cartqty'].toString());
-              //print(cartqty);
+              cartqty = int.parse(jsondata['cartqty'].toString());
+              print(cartqty);
               productList = List <Product>.from(
                 extractdata['products'].map((toolJson) => Product.fromJson(toolJson)),
               );
@@ -292,8 +293,8 @@ class _SellerTabState extends State<SellerTab> {
               noPage = int.parse(jsondata['noPage']); //get number of pages
               numberofresult = int.parse(jsondata['noResult']);
               print(numberofresult);
-              //cartqty = int.parse(jsondata['cartqty'].toString());
-              //print(cartqty);
+              cartqty = int.parse(jsondata['cartqty'].toString());
+              print(cartqty);
               productList = List <Product>.from(
                 extractdata['products'].map((toolJson) => Product.fromJson(toolJson)),
               );
